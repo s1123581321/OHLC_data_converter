@@ -1,0 +1,111 @@
+/*
+Code to convert 1m OHLC financial data to different time frame OHLC like 5m or 15m.
+Uses the 1m data from https://www.histdata.com/ in the "Generic ASCII" format.
+Outputs data in the required period in the same format as the 1m data;
+date time;open;high;low;close;0
+
+See example output at end of code.
+
+Note that the code starts at the first data point and counts forward from there.
+So if 5m is chosen and the data starts at 16:33, then the OHLC will run as;
+date 163300;open;high;low;close;0
+data 163800;open;high;low;close;0
+date 164300;open;high;low;close;0
+date 164800;open;high;low;close;0
+
+For any questions or comments, you can message my reddit account: s1123581321
+*/
+
+
+
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+int main()
+{
+    //Reading the data out of the file
+    //Data from https://www.histdata.com/ in the "Generic ASCII" format
+    ifstream data_file("data2020.csv");
+    string entry;
+    int line=0;
+
+    //Finds the total number of lines in the file
+    while(getline(data_file,entry)){
+        line=line+1;
+    }
+    data_file.clear();
+    data_file.seekg(0);
+
+    //Period wanted, for 5m OHCL input, 5, for 15m OHLC input, 15, for 1day OHLC input, 1440
+    int form=5;
+
+    float high_,low_;   //Temporary high and low variables for for loop
+    int len=line/form;  //The number of lines that will be in the output file
+    float open,high,low,close;  //The variables to be outputted
+    int date,time;  //More output variables
+    char semi=';';  //Output again
+    int vol;    //Output again
+    float dud;  //Dud variable to read unnecessary data into
+
+    ofstream output_file("output.txt");
+
+    //Finds the relevant date, time and OHLC and writes them to a file
+    for(int i=0;i<len;++i){
+        high=0;
+        low=10;
+        for(int j=form*i;j<(form*(i+1));++j){
+            if(j==form*i){
+                data_file>>date>>time>>semi>>open>>semi>>high_>>semi>>low_>>semi>>dud>>semi>>vol;
+            }else if(j==((form*(i+1))-1)){
+                data_file>>dud>>dud>>semi>>dud>>semi>>high_>>semi>>low_>>semi>>close>>semi>>vol;
+            }else{
+                data_file>>dud>>dud>>semi>>dud>>semi>>high_>>semi>>low_>>semi>>dud>>semi>>vol;
+            }
+            if(high_>high){
+                high=high_;
+            }
+            if(low_<low){
+                low=low_;
+            }
+        }
+        output_file<<date<<" "<<time<<semi<<open<<semi<<high<<semi<<low<<semi<<close<<semi<<vol<<endl;
+    }
+
+    data_file.close();
+    output_file.close();
+
+    return 0;
+}
+
+
+/*
+Output example;
+20200101 170000;1.1212;1.12139;1.12106;1.12125;0
+20200101 170500;1.12125;1.12127;1.12125;1.12127;0
+20200101 171000;1.12127;1.12127;1.12123;1.12127;0
+20200101 171500;1.12127;1.12154;1.12127;1.12146;0
+
+corresponds to the input;
+20200101 170000;1.121200;1.121210;1.121170;1.121200;0
+20200101 170100;1.121060;1.121350;1.121060;1.121350;0
+20200101 170200;1.121360;1.121390;1.121360;1.121390;0
+20200101 170300;1.121350;1.121350;1.121200;1.121220;0
+20200101 170400;1.121220;1.121250;1.121220;1.121250;0
+20200101 170500;1.121250;1.121270;1.121250;1.121270;0
+20200101 170600;1.121270;1.121270;1.121270;1.121270;0
+20200101 170700;1.121270;1.121270;1.121270;1.121270;0
+20200101 170800;1.121270;1.121270;1.121270;1.121270;0
+20200101 170900;1.121270;1.121270;1.121270;1.121270;0
+20200101 171000;1.121270;1.121270;1.121230;1.121270;0
+20200101 171100;1.121270;1.121270;1.121270;1.121270;0
+20200101 171200;1.121270;1.121270;1.121270;1.121270;0
+20200101 171300;1.121270;1.121270;1.121270;1.121270;0
+20200101 171400;1.121270;1.121270;1.121270;1.121270;0
+20200101 171500;1.121270;1.121350;1.121270;1.121270;0
+20200101 171600;1.121270;1.121270;1.121270;1.121270;0
+20200101 171700;1.121280;1.121540;1.121280;1.121520;0
+20200101 171800;1.121520;1.121540;1.121480;1.121510;0
+20200101 171900;1.121510;1.121510;1.121350;1.121460;0
+*/
