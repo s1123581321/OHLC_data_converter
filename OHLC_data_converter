@@ -13,6 +13,8 @@ data 163800;open;high;low;close;0
 date 164300;open;high;low;close;0
 date 164800;open;high;low;close;0
 
+See data_example.png to see the candlestick graphs of the example output given below.
+
 For any questions or comments, you can message my reddit account: s1123581321
 */
 
@@ -108,4 +110,6 @@ corresponds to the input;
 20200101 173700;1.121540;1.121540;1.121510;1.121510;0
 20200101 173800;1.121540;1.121550;1.121520;1.121530;0
 20200101 173900;1.121530;1.121530;1.121520;1.121520;0
+
+See data_example.png to see the candlestick graphs of this example output.
 */
