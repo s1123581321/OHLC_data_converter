@@ -15,7 +15,6 @@ date 164800;open;high;low;close;0
 
 See data_example.png to see the candlestick graphs of the example output given below.
 
-For any questions or comments, you can message my reddit account: s1123581321
 */
 
 
